@@ -4,7 +4,7 @@ import ChatWindow from "./Chat/ChatWindow";
 import { getOrCreateChat } from "../services/chatServices";
 import "../../src/chat.css";
 
-const SOCKET_URL = "http://localhost:4000";
+const SOCKET_URL = "https://campuskart-7lsu.onrender.com";
 
 export default function ChatPopup({ productId, otherUserId, onClose }) {
   const [chat, setChat] = useState(null);

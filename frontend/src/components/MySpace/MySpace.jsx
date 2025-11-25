@@ -5,7 +5,7 @@ import ProductList from "../Products/ProductList";
 import ChatPopup from "../Chat";
 import { useNavigate } from "react-router-dom";
 
-const API_BASE = "http://localhost:4000/api";
+const API_BASE = "https://campuskart-7lsu.onrender.com";
 
 export default function MySpace() {
   const navigate = useNavigate();

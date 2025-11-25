@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const API_BASE = "http://localhost:4000/api";
+const API_BASE = "https://campuskart-7lsu.onrender.com";
 
 export default function ProductList({ products, onDeleted }) {
   const navigate = useNavigate();
