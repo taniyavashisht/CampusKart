@@ -23,5 +23,11 @@ dist-ssr
 *.sln
 *.sw?
 
+node_modules/
+dist/
+.env
+.vercel
+
+
 
 
