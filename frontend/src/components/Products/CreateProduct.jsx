@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./Marketplace.css"; // IMPORTANT
 
-const API_BASE = "https://campuskart-7lsu.onrender.com";
+const API_BASE = "https://campuskart-7lsu.onrender.com/api";
 
 export default function CreateProduct() {
   const navigate = useNavigate();
