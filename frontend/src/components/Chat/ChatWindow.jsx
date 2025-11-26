@@ -3,7 +3,7 @@ import axios from "axios";
 import "../../chat.css";
 import { getChatMessages } from "../../services/chatServices";
 
-const API_BASE = "https://campuskart-7lsu.onrender.com";
+const API_BASE = "https://campuskart-7lsu.onrender.com/api";
 
 export default function ChatWindow({ chat, onClose, socket }) {
   const [messages, setMessages] = useState([]);
