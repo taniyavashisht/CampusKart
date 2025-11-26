@@ -4,7 +4,7 @@ import { AuthContext } from "../../context/AuthContext";
 import ChatPopup from "../Chat";
 import "./Marketplace.css";
 
-const API_BASE = "https://campuskart-7lsu.onrender.com";
+const API_BASE = "https://campuskart-7lsu.onrender.com/api";
 
 const categories = [
   { label: "All", value: "" },
