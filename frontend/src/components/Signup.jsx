@@ -5,6 +5,7 @@ import "../login.css";
 
 export default function Signup() {
   const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -13,6 +14,7 @@ export default function Signup() {
     name: "",
     mobile: "",
   });
+
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [otp, setOtp] = useState("");
@@ -21,12 +23,18 @@ export default function Signup() {
   const [otpMessage, setOtpMessage] = useState("");
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+
     if (errors[e.target.name]) {
       setErrors({ ...errors, [e.target.name]: "" });
+    }
+
+    // ✅ VERY IMPORTANT: If email changes, reset OTP state
+    if (e.target.name === "email") {
+      setOtpSent(false);
+      setOtpVerified(false);
+      setOtp("");
+      setOtpMessage("");
     }
   };
 
@@ -52,19 +60,22 @@ export default function Signup() {
     return Object.keys(newErrors).length === 0;
   };
 
-  // --- OTP Handlers ---
+  // ✅ SEND OTP
   const handleSendOtp = async () => {
     if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
       setOtpMessage("Please enter a valid email first.");
       return;
     }
+
     setLoading(true);
     setOtpMessage("");
+
     try {
       const res = await authAPI.sendOtp({ email: formData.email });
+
       if (res.status === 200) {
         setOtpSent(true);
-        setOtpMessage("OTP sent to your email.");
+        setOtpMessage("✅ OTP sent to your email.");
       }
     } catch (err) {
       setOtpMessage(err.response?.data?.message || "Failed to send OTP.");
@@ -73,15 +84,19 @@ export default function Signup() {
     }
   };
 
+  // ✅ VERIFY OTP
   const handleVerifyOtp = async () => {
     if (!otp) {
       setOtpMessage("Please enter the OTP.");
       return;
     }
+
     setLoading(true);
     setOtpMessage("");
+
     try {
       const res = await authAPI.verifyOtp({ email: formData.email, otp });
+
       if (res.status === 200) {
         setOtpVerified(true);
         setOtpMessage("✅ OTP verified successfully!");
@@ -93,9 +108,10 @@ export default function Signup() {
     }
   };
 
-  // --- Signup Submit ---
+  // ✅ SIGNUP
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!validate()) return;
 
     if (!otpVerified) {
@@ -111,21 +127,21 @@ export default function Signup() {
 
     try {
       const { confirmPassword, mobile, ...payload } = formData;
+
       console.log("[Signup] submitting:", payload);
 
       const res = await authAPI.signup(payload);
-      console.log("[Signup] response:", res?.data);
 
-      const { success, message } = res.data || {};
-      if (!success) throw new Error(message || "Signup failed");
+      if (!res.data.success) throw new Error(res.data.message);
 
-      alert("Account created successfully! Please log in.");
+      alert("✅ Account created successfully! Please log in.");
       navigate("/login");
     } catch (err) {
       const msg =
         err?.response?.data?.message ||
         err.message ||
         "Signup failed. Please try again.";
+
       console.error("[Signup] error:", msg);
       setErrors((prev) => ({ ...prev, general: msg }));
     } finally {
@@ -149,7 +165,6 @@ export default function Signup() {
             value={formData.username}
             onChange={handleChange}
             required
-            disabled={loading}
           />
           {errors.username && <span className="error-text">{errors.username}</span>}
 
@@ -162,20 +177,14 @@ export default function Signup() {
               value={formData.email}
               onChange={handleChange}
               required
-              disabled={loading || otpSent}
             />
+
             {!otpSent && (
-              <button
-                type="button"
-                className="otp-btn"
-                onClick={handleSendOtp}
-                disabled={loading}
-              >
-                {loading ? "Sending..." : "Send OTP"}
+              <button type="button" className="otp-btn" onClick={handleSendOtp}>
+                Send OTP
               </button>
             )}
           </div>
-          {errors.email && <span className="error-text">{errors.email}</span>}
 
           {otpSent && !otpVerified && (
             <div className="otp-verify-group">
@@ -184,50 +193,19 @@ export default function Signup() {
                 placeholder="Enter OTP"
                 value={otp}
                 onChange={(e) => setOtp(e.target.value)}
-                className="otp-input"
-                disabled={loading}
               />
-              <button
-                type="button"
-                className="verify-btn"
-                onClick={handleVerifyOtp}
-                disabled={loading}
-              >
-                {loading ? "Verifying..." : "Verify OTP"}
+
+              <button type="button" className="verify-btn" onClick={handleVerifyOtp}>
+                Verify OTP
               </button>
-              <button
-                type="button"
-                className="resend-btn"
-                onClick={handleSendOtp}
-                disabled={loading}
-              >
+
+              <button type="button" className="resend-btn" onClick={handleSendOtp}>
                 Resend
               </button>
             </div>
           )}
 
           {otpMessage && <p className="otp-message">{otpMessage}</p>}
-
-          <label>Full Name</label>
-          <input
-            type="text"
-            name="name"
-            placeholder="Your full name"
-            value={formData.name}
-            onChange={handleChange}
-            disabled={loading}
-          />
-
-          <label>Mobile Number</label>
-          <input
-            type="text"
-            name="mobile"
-            placeholder="10-digit mobile number"
-            value={formData.mobile}
-            onChange={handleChange}
-            disabled={loading}
-          />
-          {errors.mobile && <span className="error-text">{errors.mobile}</span>}
 
           <label>Password *</label>
           <input
@@ -237,9 +215,7 @@ export default function Signup() {
             value={formData.password}
             onChange={handleChange}
             required
-            disabled={loading}
           />
-          {errors.password && <span className="error-text">{errors.password}</span>}
 
           <label>Confirm Password *</label>
           <input
@@ -249,11 +225,7 @@ export default function Signup() {
             value={formData.confirmPassword}
             onChange={handleChange}
             required
-            disabled={loading}
           />
-          {errors.confirmPassword && (
-            <span className="error-text">{errors.confirmPassword}</span>
-          )}
 
           <button type="submit" className="login-btn" disabled={loading}>
             {loading ? "Creating Account..." : "Create Account"}
