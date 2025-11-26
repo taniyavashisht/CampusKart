@@ -1,13 +1,15 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://campuskart-7lsu.onrender.com",
+  // ✅ MUST include /api
+  baseURL: "https://campuskart-7lsu.onrender.com/api",
   withCredentials: true,
 });
 
-// ✅ UNIVERSAL TOKEN FIX
+/* =========================
+   TOKEN INTERCEPTOR
+========================= */
 api.interceptors.request.use((config) => {
-  // Try all possible token locations
   const token =
     localStorage.getItem("token") ||
     localStorage.getItem("authToken") ||
@@ -20,7 +22,9 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Log errors
+/* =========================
+   RESPONSE LOGGER
+========================= */
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -29,13 +33,24 @@ api.interceptors.response.use(
   }
 );
 
+/* =========================
+   AUTH API
+========================= */
+
 export const authAPI = {
   login: (data) => api.post("/auth/login", data),
-  signup: (data) => api.post("/auth/signup", data),
+
+  // ✅ THIS WAS WRONG BEFORE
+  signup: (data) => api.post("/auth/register", data),
+
   sendOtp: (data) => api.post("/auth/send-otp", data),
+
   verifyOtp: (data) => api.post("/auth/verify-otp", data),
+
   forgotPassword: (data) => api.post("/auth/forgot-password", data),
+
   resetPassword: (data) => api.post("/auth/reset-password", data),
+
   me: () => api.get("/auth/me"),
 };
 

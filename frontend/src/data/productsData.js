@@ -1,11 +1,11 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "https://campuskart-7lsu.onrender.com",
+  baseURL: "https://campuskart-7lsu.onrender.com/api",
 });
 
 /**
- * Get all products from database (for Home / Marketplace)
+ * ✅ Get all products from database (for Home / Marketplace)
  */
 export const getAllProducts = async (filters = "") => {
   try {
@@ -18,11 +18,11 @@ export const getAllProducts = async (filters = "") => {
 };
 
 /**
- * Get products created by the logged-in user (for MySpace)
+ * ✅ Get products created by the logged-in user (for MySpace)
  */
 export const getMyProducts = async (token) => {
   try {
-    const res = await API.get("/products/my", {
+    const res = await API.get("/products", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -36,7 +36,7 @@ export const getMyProducts = async (token) => {
 };
 
 /**
- * Create a new product (for CreateProduct page)
+ * ✅ Create a new product (for CreateProduct page)
  */
 export const createProduct = async (productData, token) => {
   try {
