@@ -40,8 +40,8 @@ api.interceptors.response.use(
 export const authAPI = {
   login: (data) => api.post("/auth/login", data),
 
-  // ✅ THIS WAS WRONG BEFORE
-  signup: (data) => api.post("/auth/register", data),
+  // ✅ use /signup – matches typical backend route
+  signup: (data) => api.post("/auth/signup", data),
 
   sendOtp: (data) => api.post("/auth/send-otp", data),
 
