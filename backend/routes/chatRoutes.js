@@ -1,4 +1,6 @@
 import express from "express";
+import { reportChat } from "../controllers/chatController.js";
+
 import { protect } from "../middleware/Auth.js";
 import {
   accessChat,
@@ -20,5 +22,8 @@ router.get("/:chatId", protect, getMessages);
 
 // ✅ DELETE chat
 router.delete("/:id", protect, deleteChat);
+
+router.post("/report/:chatId", protect, reportChat);
+
 
 export default router;

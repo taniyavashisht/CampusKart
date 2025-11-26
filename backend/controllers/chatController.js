@@ -1,6 +1,7 @@
 import Chat from "../models/Chat.js";
 import Message from "../models/Message.js";
 import User from "../models/User.js";
+import Report from "../models/Report.js";
 
 
 // ✅ Create or return chat
@@ -124,5 +125,49 @@ export const deleteChat = async (req, res) => {
   } catch (error) {
     console.error("Delete chat error:", error);
     res.status(500).json({ message: "Failed to delete chat" });
+  }
+};
+
+export const reportChat = async (req, res) => {
+  try {
+    const { chatId } = req.params;
+    const userId = req.user.id;
+
+    const chat = await Chat.findById(chatId).populate("users");
+
+    if (!chat) {
+      return res.status(404).json({ message: "Chat not found" });
+    }
+
+    const reportedUser = chat.users.find(
+      (u) => u._id.toString() !== userId
+    );
+
+    if (!reportedUser) {
+      return res.status(400).json({ message: "No user to report" });
+    }
+
+    const alreadyReported = await Report.findOne({
+      chat: chatId,
+      reportedBy: userId
+    });
+
+    if (alreadyReported) {
+      return res.status(400).json({
+        message: "You already reported this chat"
+      });
+    }
+
+    await Report.create({
+      chat: chatId,
+      reportedBy: userId,
+      reportedUser: reportedUser._id
+    });
+
+    res.json({ success: true, message: "Chat reported successfully" });
+
+  } catch (err) {
+    console.error("Report chat error:", err);
+    res.status(500).json({ message: "Failed to report chat" });
   }
 };

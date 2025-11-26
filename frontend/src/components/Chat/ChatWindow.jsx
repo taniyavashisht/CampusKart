@@ -51,7 +51,7 @@ export default function ChatWindow({ chat, onClose, socket }) {
     setText("");
   };
 
-  // ✅ Delete Chat (NEW)
+  // ✅ Delete Chat
   const handleDeleteChat = async () => {
     if (!window.confirm("Delete this chat permanently?")) return;
 
@@ -66,12 +66,37 @@ export default function ChatWindow({ chat, onClose, socket }) {
 
       alert("✅ Chat deleted successfully");
 
-      onClose();             // close popup
-      window.location.reload(); // refresh MySpace + lists
+      onClose();
+      window.location.reload();
 
     } catch (error) {
       console.error("Delete chat error:", error);
       alert("❌ Failed to delete chat");
+    }
+  };
+
+  // ✅ Report Chat
+  const handleReportChat = async () => {
+    if (!window.confirm("Report this user for inappropriate behaviour?")) return;
+
+    try {
+      const token = localStorage.getItem("token");
+
+      await axios.post(
+        `${API_BASE}/chat/report/${chat._id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      alert("✅ User reported successfully");
+
+    } catch (error) {
+      console.error("Report chat error:", error);
+      alert(error.response?.data?.message || "❌ Failed to report user");
     }
   };
 
@@ -95,7 +120,6 @@ export default function ChatWindow({ chat, onClose, socket }) {
 
         <div className="ck-chat-header-right">
 
-          {/* ✅ DELETE BUTTON */}
           <button
             className="ck-block-btn"
             onClick={handleDeleteChat}
@@ -103,7 +127,10 @@ export default function ChatWindow({ chat, onClose, socket }) {
             Delete
           </button>
 
-          <button className="ck-report-btn">
+          <button
+            className="ck-report-btn"
+            onClick={handleReportChat}
+          >
             Report
           </button>
 
