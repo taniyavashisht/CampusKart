@@ -5,7 +5,7 @@ import ProductList from "../Products/ProductList";
 import ChatPopup from "../Chat";
 import { useNavigate } from "react-router-dom";
 
-const API_BASE = "https://campuskart-7lsu.onrender.com";
+const API_BASE = "https://campuskart-7lsu.onrender.com/api";
 
 export default function MySpace() {
   const navigate = useNavigate();
@@ -47,15 +47,16 @@ export default function MySpace() {
 
         if (res.data.success) {
           const filtered = res.data.products.filter((product) => {
-            if (!product.seller) return false;
+  if (!product.seller) return false;
 
-            const sellerId =
-              typeof product.seller === "object"
-                ? product.seller._id
-                : product.seller;
+  const sellerId =
+    typeof product.seller === "object"
+      ? product.seller._id
+      : product.seller;
 
-            return sellerId === user.id;
-          });
+  return sellerId === (user._id || user.id);
+});
+
 
           setMyProducts(filtered);
         }
